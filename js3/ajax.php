@@ -8,38 +8,39 @@ $colors = ['Красный', 'Синий', 'Белый', 'Желтый', 'Чер
 $result = [];
 
 for($i = 0; $i< 50; $i++) {
-    $item = [];
-    $item['id'] = $i+1;
-    $item['name'] = $names[rand(0, count($names)-1)];
-    $item['year'] = rand(1, 10)+2007;
-    $item['color'] = $colors[rand(0, count($colors)-1)];
-    
-    $result[] = $item;
+$item = [];
+$item['id'] = $i+1;
+$item['name'] = $names[rand(0, count($names)-1)];
+$item['year'] = rand(1, 10)+2007;
+$item['color'] = $colors[rand(0, count($colors)-1)];
+
+$result[] = $item;
 }
 
 die(json_encode($result));
 /* */
 
-$page = (int)$_GET['page'];
-if($page<1) {
+$page = (int) $_GET['page'];
+if ($page < 1) {
     $page = 1;
 }
 $page--;
 
-$field = strtolower($_GET['sort']);
-if(!in_array($field, ['id', 'name', 'year', 'color'])) {
+$sort_param = isset($_GET['sort']) ? $_GET['sort'] : '';
+$field = strtolower($sort_param);
+if (!in_array($field, ['id', 'name', 'year', 'color'])) {
     $field = 'id';
 }
 
-$dir = strtolower($_GET['dir']);
-if(!in_array($dir, ['asc', 'desc'])) {
+$dir_param = isset($_GET['dir']) ? $_GET['dir'] : '';
+$dir = strtolower($dir_param);
+if (!in_array($dir, ['asc', 'desc'])) {
     $dir = 'asc';
 }
 
 foreach ($data as $key => $row) {
     $sort[$key] = $row[$field];
 }
+array_multisort($sort, ($dir == 'asc') ? SORT_ASC : SORT_DESC, $data);
 
-array_multisort($sort, ($dir == 'asc')?SORT_ASC:SORT_DESC, $data);
-
-echo json_encode(array_slice($data, $page*10, 10));
+echo json_encode(array_slice($data, $page * 10, 10));
